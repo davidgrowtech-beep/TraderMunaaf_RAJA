@@ -1,937 +1,163 @@
 <!DOCTYPE html>
 <html lang="te">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Learn Skills with Trader Munaaf | నైపుణ్య అభివృద్ధి</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Munaaf Trader - Learning Machine</title>
+<meta name="description" content="Learn stock market step by step with Munaaf Trader. స్టాక్ మార్కెట్ నేర్చుకోండి.">
+<meta name="theme-color" content="#052E1A">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Noto+Sans+Telugu:wght@500;700&display=swap" rel="stylesheet">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2135032810416149');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2135032810416149&ev=PageView&noscript=1"></noscript>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --green: #00ff88;
-    --green-dim: #00c466;
-    --red: #ff3355;
-    --red-dim: #cc2244;
-    --blue: #00aaff;
-    --gold: #ffcc00;
-    --bg: #080c10;
-    --bg2: #0d1318;
-    --bg3: #111820;
-    --border: rgba(0,255,136,0.12);
-    --border2: rgba(255,255,255,0.06);
-    --text: #e8eef4;
-    --muted: rgba(232,238,244,0.4);
-    --font-mono: 'Share Tech Mono', monospace;
-    --font-display: 'Orbitron', sans-serif;
-    --font-body: 'Hind', 'DM Sans', sans-serif;
-  }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px
-    );
-    pointer-events: none;
-    z-index: 1000;
-  }
-
-  .grid-bg {
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    z-index: 0;
-  }
-
-  .ticker-wrap {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 32px;
-    background: #0a1208;
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-  }
-  .ticker-inner {
-    display: flex;
-    gap: 0;
-    animation: ticker-scroll 30s linear infinite;
-    white-space: nowrap;
-  }
-  .ticker-item {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 0 20px;
-    border-right: 1px solid rgba(0,255,136,0.1);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .ticker-sym { color: var(--text); font-weight: 600; }
-  .ticker-val { color: var(--green); }
-  .ticker-val.down { color: var(--red); }
-  .ticker-chg { font-size: 10px; opacity: 0.7; }
-  @keyframes ticker-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  .status-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 24px;
-    background: #0a1208;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    z-index: 100;
-  }
-  .status-bar span {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--muted);
-  }
-  .status-bar .online { color: var(--green); }
-
-  .chart-bg {
-    position: fixed;
-    bottom: 24px; left: 0; right: 0;
-    height: 200px;
-    z-index: 0;
-    opacity: 0.12;
-    pointer-events: none;
-  }
-
-  .main {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    padding: 52px 16px 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 440px;
-  }
-
-  .panel {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-  }
-  .panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--green), var(--blue), var(--green));
-    background-size: 200% 100%;
-    animation: gradient-shift 3s linear infinite;
-  }
-  @keyframes gradient-shift {
-    from { background-position: 0% 0%; }
-    to { background-position: 200% 0%; }
-  }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: #0a1510;
-    border-bottom: 1px solid var(--border);
-  }
-  .panel-title {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .panel-controls { display: flex; gap: 6px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-r { background: var(--red); }
-  .dot-y { background: var(--gold); }
-  .dot-g { background: var(--green); }
-
-  .profile-block {
-    padding: 20px;
-    border-bottom: 1px solid var(--border2);
-  }
-  .profile-inner {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 4px;
-    border: 1px solid var(--green);
-    overflow: hidden;
-    flex-shrink: 0;
-    position: relative;
-    background: #0a1510;
-    box-shadow: 0 0 20px rgba(0,255,136,0.15), inset 0 0 20px rgba(0,255,136,0.05);
-  }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-corner {
-    position: absolute;
-    bottom: 0; right: 0;
-    width: 16px; height: 16px;
-    border-top: 1px solid var(--green);
-    border-left: 1px solid var(--green);
-  }
-  .profile-meta { flex: 1; }
-  .trader-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 900;
-    color: var(--text);
-    letter-spacing: 1.5px;
-    line-height: 1.15;
-    margin-bottom: 4px;
-  }
-  .trader-name span { color: var(--green); }
-  .trader-sub {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-  }
-  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    padding: 3px 8px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    font-weight: 700;
-  }
-  .tag-green {
-    background: rgba(0,255,136,0.1);
-    color: var(--green);
-    border: 1px solid rgba(0,255,136,0.2);
-  }
-  .tag-blue {
-    background: rgba(0,170,255,0.1);
-    color: var(--blue);
-    border: 1px solid rgba(0,170,255,0.2);
-  }
-  .tag-red {
-    background: rgba(255,51,85,0.1);
-    color: var(--red);
-    border: 1px solid rgba(255,51,85,0.2);
-    display: flex; align-items: center; gap: 4px;
-  }
-  .blink-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--red);
-    animation: blink 1s infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-bottom: 1px solid var(--border2);
-  }
-  .stat-cell {
-    padding: 12px;
-    text-align: center;
-    border-right: 1px solid var(--border2);
-  }
-  .stat-cell:last-child { border-right: none; }
-  .stat-val {
-    font-family: var(--font-mono);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--green);
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-  .stat-val.gold { color: var(--gold); }
-  .stat-label {
-    font-family: var(--font-body);
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.3px;
-  }
-
-  .chart-section {
-    padding: 14px;
-    border-bottom: 1px solid var(--border2);
-    background: rgba(0,0,0,0.2);
-  }
-  .chart-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .chart-label .up { color: var(--green); }
-  .candle-chart { display: flex; align-items: flex-end; gap: 3px; height: 60px; }
-  .candle { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
-  .wick { width: 1px; background: currentColor; opacity: 0.5; }
-  .body { width: 70%; border-radius: 1px; }
-  .candle.bull { color: var(--green); }
-  .candle.bear { color: var(--red); }
-  .candle.bull .body { background: var(--green); }
-  .candle.bear .body { background: var(--red); }
-
-  .features {
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-bottom: 1px solid var(--border2);
-  }
-  .feat-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-radius: 3px;
-    transition: all 0.2s;
-  }
-  .feat-row:hover {
-    border-color: rgba(0,255,136,0.25);
-    background: rgba(0,255,136,0.04);
-    transform: translateX(2px);
-  }
-  .feat-icon {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(0,255,136,0.2);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,255,136,0.06);
-    flex-shrink: 0;
-    font-size: 16px;
-  }
-  .feat-text p {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 1px;
-  }
-  .feat-text span {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    color: var(--muted);
-  }
-  .feat-arrow {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: rgba(0,255,136,0.3);
-  }
-
-  .cta-block { padding: 14px; }
-  .cta-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 16px;
-    background: transparent;
-    border: 1px solid var(--green);
-    border-radius: 3px;
-    color: var(--green);
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-decoration: none;
-    text-transform: uppercase;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .cta-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--green);
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 0;
-  }
-  .cta-btn:hover::before { transform: translateX(0); }
-  .cta-btn:hover { color: #000; box-shadow: 0 0 30px rgba(0,255,136,0.3); }
-  .cta-btn span, .cta-btn svg { position: relative; z-index: 1; }
-  .cta-btn .cmd-prefix { font-family: var(--font-mono); font-size: 12px; opacity: 0.6; }
-  .cta-note {
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--muted);
-    margin-top: 8px;
-    letter-spacing: 0.5px;
-  }
-  .fallback-link {
-    display: none;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--green);
-    margin-top: 8px;
-    text-decoration: underline;
-  }
-  .fallback-link.show { display: block; }
-  #openInBrowserNotice {
-    display: none;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    color: var(--gold);
-    background: rgba(255,204,0,0.08);
-    border: 1px solid rgba(255,204,0,0.25);
-    border-radius: 3px;
-    padding: 8px 10px;
-    margin-top: 8px;
-    line-height: 1.4;
-  }
-  #openInBrowserNotice.show { display: block; }
-
-  .footer-bar {
-    padding: 10px 14px;
-    background: #060a08;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .footer-bar p { font-family: var(--font-mono); font-size: 8.5px; color: rgba(255,255,255,0.2); }
-  .footer-bar .credit { color: rgba(0,255,136,0.4); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .a1 { animation: fadeUp 0.5s 0.0s both; }
-  .a2 { animation: fadeUp 0.5s 0.1s both; }
-  .a3 { animation: fadeUp 0.5s 0.2s both; }
-  .a4 { animation: fadeUp 0.5s 0.3s both; }
-  .a5 { animation: fadeUp 0.5s 0.4s both; }
-
-  @media (max-width: 480px) {
-    .trader-name { font-size: 15px; }
-    .stat-val { font-size: 14px; }
-  }
-
-  /* ===== bilingual + responsive additions ===== */
-  html { -webkit-text-size-adjust: 100%; }
-  body { min-height: 100vh; min-height: 100dvh; }
-  .en { display: block; font-family: var(--font-body); font-weight: 400; font-size: .82em; color: var(--muted); letter-spacing: .2px; margin-top: 1px; text-transform: none; }
-  .tag .en, .cta-btn .en { display: inline; }
-  .main { padding: calc(44px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
-  .ticker-wrap { padding-top: env(safe-area-inset-top, 0px); height: calc(32px + env(safe-area-inset-top, 0px)); }
-  .status-bar { padding-bottom: env(safe-area-inset-bottom, 0px); height: calc(24px + env(safe-area-inset-bottom, 0px)); }
-  .container { max-width: clamp(320px, 92vw, 480px); }
-  .trader-name { font-size: clamp(15px, 4.6vw, 19px); }
-  .stat-val { font-size: clamp(14px, 4.4vw, 18px); }
-  .stat-label { font-size: clamp(9.5px, 2.8vw, 11px); line-height: 1.3; }
-  .stat-label .en { font-size: .9em; }
-  .feat-text p { font-size: clamp(13px, 3.9vw, 15px); line-height: 1.3; }
-  .feat-text span { font-family: var(--font-body); font-size: clamp(10.5px, 3vw, 12px); line-height: 1.35; display: block; }
-  .tag { font-size: clamp(9px, 2.6vw, 10.5px); }
-  .tag-row { gap: 5px; }
-  .avatar { width: clamp(60px, 18vw, 80px); height: clamp(60px, 18vw, 80px); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); color: var(--green); font-size: 20px; }
-  .avatar img { position: absolute; inset: 0; }
-  .cta-btn { min-height: 56px; padding: 12px 14px; flex-wrap: wrap; text-align: center; line-height: 1.25; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  .cta-btn .cta-text { display: flex; flex-direction: column; align-items: center; font-family: var(--font-body); font-size: clamp(14px, 4.2vw, 16px); letter-spacing: .3px; text-transform: none; }
-  .cta-btn .cta-text .en { color: inherit; opacity: .8; font-size: .8em; font-weight: 600; }
-  .cta-btn { animation: cta-pulse 1.8s ease-in-out infinite; }
-  @keyframes cta-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(0,255,136,.35); } 50% { box-shadow: 0 0 0 8px rgba(0,255,136,0); } }
-  .cta-note { font-family: var(--font-body); font-size: 11px; line-height: 1.45; letter-spacing: 0; }
-  .steps { margin-top: 10px; padding: 9px 11px; border: 1px dashed rgba(255,204,0,.35); background: rgba(255,204,0,.06); border-radius: 3px; font-size: 12px; line-height: 1.5; color: #f3e6a8; }
-  .steps .en { color: rgba(243,230,168,.75); }
-  .fallback-link, #openInBrowserNotice { font-family: var(--font-body); font-size: 12px; line-height: 1.5; }
-  .fallback-link { padding: 8px; }
-  .footer-bar { flex-direction: column; text-align: center; gap: 8px; }
-  .footer-bar p { font-family: var(--font-body); font-size: 10px; }
-  .adby { font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-  .adby-btn { display: inline-block; background: #ff0000; color: #fff; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: sans-serif; }
-  .chart-bg { height: 28vh; max-height: 220px; }
-  @media (max-width: 360px) {
-    .profile-block { padding: 14px; }
-    .profile-inner { gap: 12px; }
-    .features, .cta-block, .chart-section { padding: 10px; }
-    .feat-row { gap: 9px; padding: 8px 9px; }
-    .feat-icon { width: 30px; height: 30px; font-size: 14px; }
-    .stat-cell { padding: 10px 4px; }
-    .tag-row .tag-blue { display: none; }
-  }
-  @media (min-width: 768px) {
-    .container { max-width: 520px; }
-    .main { padding-top: 64px; padding-bottom: 56px; }
-  }
-  @media (max-height: 480px) and (orientation: landscape) {
-    .main { align-items: flex-start; }
-    .chart-section { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
+:root{--g:#00E676;--r:#FF2D4B;--bg:#070F0C;--card:#0F1E18;--dim:#9DB5AA}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora','Noto Sans Telugu',sans-serif;background:var(--bg);color:#F2FFF8;line-height:1.6;padding-bottom:env(safe-area-inset-bottom);overflow-x:hidden}
+.te{font-family:'Noto Sans Telugu','Sora',sans-serif}
+.wrap{max-width:520px;margin:0 auto}
+.strip{background:#030806;border-block:1px solid rgba(255,255,255,.08);color:#fff;overflow:hidden;white-space:nowrap;font-size:13px;font-weight:600;padding:7px 0}
+.strip .t{display:inline-block;padding-left:100%;animation:run 38s linear infinite}
+.strip.r .t{animation-direction:reverse}
+.strip span{margin-right:34px}.up{color:var(--g)}.dn{color:var(--r)}
+@keyframes run{to{transform:translateX(-100%)}}
+header{position:relative;overflow:hidden;background:linear-gradient(135deg,#04331D 0%,#0A1A14 48%,#43091A 100%);padding:22px 18px 30px}
+.candles{position:absolute;left:0;right:0;bottom:0;height:130px;opacity:.3;pointer-events:none}
+.candles i{position:absolute;bottom:0;width:7px;border-radius:2px;transform-origin:bottom;animation:cd 3s ease-in-out infinite alternate}
+.candles .g{background:var(--g)}.candles .r{background:var(--r)}
+@keyframes cd{from{transform:scaleY(.35)}to{transform:scaleY(1.15)}}
+header .wrap{position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:20px;padding:10px 0 4px 10px}
+.lw{position:relative;width:104px;height:104px;flex:none;animation:bob 3.2s ease-in-out infinite}
+.lw::before{content:'';position:absolute;inset:-7px;border-radius:50%;background:conic-gradient(var(--g),#FFD400,var(--r),#FFD400,var(--g));animation:spin 2.6s linear infinite}
+.lw::after{content:'';position:absolute;inset:-22px;border-radius:50%;background:radial-gradient(circle,rgba(0,230,118,.55),transparent 68%);animation:aura 1.6s ease-in-out infinite alternate;z-index:-1}
+.lw img{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid #07130E;z-index:1}
+.orb{position:absolute;inset:-17px;animation:spin 4.5s linear infinite;z-index:2}
+.orb.b{inset:-12px;animation-duration:3.2s;animation-direction:reverse}
+.orb i{position:absolute;top:0;left:50%;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:var(--r);box-shadow:0 0 12px 2px var(--r)}
+.orb.b i{background:var(--g);box-shadow:0 0 12px 2px var(--g);top:auto;bottom:0}
+.live{position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);z-index:3;background:var(--r);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.8px;padding:2px 10px;border-radius:99px;border:2px solid #07130E;animation:blinkl 1s steps(2) infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes aura{from{background:radial-gradient(circle,rgba(0,230,118,.6),transparent 68%)}to{background:radial-gradient(circle,rgba(255,45,75,.6),transparent 68%)}}
+@keyframes blinkl{50%{opacity:.55}}
+.brand b{font-size:24px;line-height:1.15;display:block;font-weight:800;background:linear-gradient(90deg,var(--g),#fff 50%,#FF6B81);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{font-size:13px;color:#FFD400;font-weight:700;letter-spacing:.4px}
+.eyebrow{margin-top:30px;display:inline-block;background:rgba(255,45,75,.14);color:#FF8A9B;border:1px solid rgba(255,45,75,.55);padding:5px 14px;border-radius:99px;font-size:13px;font-weight:700}
+h1{font-size:28px;line-height:1.3;margin-top:12px;font-weight:800}
+h1 span{background:linear-gradient(90deg,var(--g),#B6FF3C 55%,#FF6B81);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin-top:8px;color:#C8DDD2;font-size:15px}
+.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:440px;margin:22px auto 8px;padding:16px 18px;border-radius:20px;color:#fff;font-weight:800;font-size:17px;text-decoration:none;line-height:1.25;text-shadow:0 2px 3px rgba(0,0,0,.4);background:linear-gradient(180deg,#6BFFA6 0%,#00C853 48%,#008A3A 100%);box-shadow:0 8px 0 #00602A,0 14px 26px rgba(0,230,118,.45),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25);animation:edge 1.2s ease-in-out infinite;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#FF7A8E 0%,#FF2D4B 48%,#B5102B 100%);opacity:0;animation:swap 1.2s ease-in-out infinite}
+.btn::after{content:'';position:absolute;top:0;left:-60%;width:30%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:shine 2.2s infinite}
+.btn>*{position:relative;z-index:1}
+.btn .ic{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;box-shadow:0 3px 0 rgba(0,0,0,.25);animation:wob 1.2s ease-in-out infinite}
+.btn .ic svg{width:25px;height:25px;fill:#229ED9;margin-right:2px}
+.btn small{display:block;font-weight:600;font-size:12.5px;opacity:.96}
+.btn.b2{background:linear-gradient(180deg,#FFD84D 0%,#FF9A00 48%,#D96A00 100%);box-shadow:0 8px 0 #8A4300,0 14px 26px rgba(255,154,0,.45),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)}
+.btn:active{transform:translateY(6px);box-shadow:0 2px 0 #00602A,0 4px 10px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.4)}
+.btn.busy{pointer-events:none;filter:saturate(.8)}
+@keyframes swap{0%,35%{opacity:0}50%,85%{opacity:1}100%{opacity:0}}
+@keyframes edge{0%,35%{box-shadow:0 8px 0 #00602A,0 0 0 0 rgba(0,230,118,.7),0 14px 30px rgba(0,230,118,.55),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)}
+50%,85%{box-shadow:0 8px 0 #7A0C22,0 0 0 14px rgba(255,45,75,0),0 14px 34px rgba(255,45,75,.65),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)}
+100%{box-shadow:0 8px 0 #00602A,0 0 0 0 rgba(0,230,118,.7),0 14px 30px rgba(0,230,118,.55),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)}}
+@keyframes shine{0%{left:-60%}60%,100%{left:130%}}
+@keyframes wob{50%{transform:rotate(-12deg) scale(1.1)}}
+.hint{text-align:center;font-size:12.5px;color:#FFD400;font-weight:600;margin-bottom:4px}
+main{padding:28px 18px 8px}
+h2{font-size:21px;line-height:1.35;margin-bottom:14px}
+h2 small{font-weight:500;color:var(--dim);font-size:14px}
+.list{list-style:none;display:grid;gap:12px}
+.list li{background:var(--card);border-left:5px solid var(--g);padding:12px 14px;border-radius:0 14px 14px 0;font-size:15px;box-shadow:0 3px 14px rgba(0,0,0,.35)}
+.list li:nth-child(even){border-color:var(--r)}
+.list li span{display:block;color:var(--dim);font-size:13.5px}
+.cta2{margin-top:24px;background:linear-gradient(135deg,#04331D,#43091A);padding:26px 18px 32px;text-align:center}
+.cta2 p{font-size:17px;font-weight:700}
+.disc{padding:18px;font-size:12px;color:var(--dim);line-height:1.6}
+footer{background:#030806;text-align:center;padding:16px;font-size:13px;color:var(--dim);border-top:1px solid rgba(255,255,255,.08)}
+footer a{color:#FFD400;font-weight:700;text-decoration:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
-
-<!-- Meta Pixel is loaded further down by the tracking script (loadMetaPixel),
-     so there's no separate init here — avoids a double PageView fire. -->
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1463025795887022&ev=PageView&noscript=1"
-/></noscript>
-
 </head>
 <body>
-
-<div class="grid-bg"></div>
-
-<!-- TICKER TAPE -->
-<div class="ticker-wrap">
-  <div class="ticker-inner" id="ticker"></div>
-</div>
-
-<!-- CHART BACKGROUND SVG -->
-<svg class="chart-bg" viewBox="0 0 800 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-  <polyline points="0,150 50,130 100,145 150,90 200,110 250,70 300,85 350,50 400,65 450,40 500,60 550,30 600,50 650,20 700,35 750,15 800,25"
-    fill="none" stroke="#00ff88" stroke-width="1.5"/>
-  <polyline points="0,150 50,130 100,145 150,90 200,110 250,70 300,85 350,50 400,65 450,40 500,60 550,30 600,50 650,20 700,35 750,15 800,25 800,200 0,200"
-    fill="url(#chartGrad)" stroke="none"/>
-  <defs>
-    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-</svg>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="container">
-
-    <div class="panel a1">
-      <div class="panel-header">
-        <span class="panel-title">TRADER_MUNAAF // SKILL TERMINAL</span>
-        <div class="panel-controls">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
-        </div>
-      </div>
-
-      <!-- PROFILE -->
-      <div class="profile-block a2">
-        <div class="profile-inner">
-          <div class="avatar">TM
-            <img src="./mnf.jpeg" alt="Trader Munaaf" width="80" height="80" onerror="this.style.display='none'"/>
-            <div class="avatar-corner"></div>
-          </div>
-          <div class="profile-meta">
-            <div class="trader-name">TRADER<br/><span>MUNAAF</span></div>
-            <div class="trader-sub">నైపుణ్య అభివృద్ధి సిస్టమ్ v2.4 · Skill Development System</div>
-            <div class="tag-row">
-              <span class="tag tag-green">⭐ ప్రీమియం <span class="en">Premium</span></span>
-              <span class="tag tag-red"><span class="blink-dot"></span>లైవ్ <span class="en">LIVE</span></span>
-              <span class="tag tag-blue">50K+ మెంబర్స్ <span class="en">Members</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STATS -->
-      <div class="stats-row a3">
-        <div class="stat-cell">
-          <div class="stat-val">98%</div>
-          <div class="stat-label">సంతృప్తి రేటు<span class="en">Satisfaction</span></div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-val gold">50K+</div>
-          <div class="stat-label">విద్యార్థులు<span class="en">Students</span></div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-val">24/7</div>
-          <div class="stat-label">సపోర్ట్<span class="en">Support</span></div>
-        </div>
-      </div>
-
-      <!-- MINI CANDLE CHART -->
-      <div class="chart-section a3">
-        <div class="chart-label">
-          <span>// స్కిల్ గ్రోత్ · Skill Growth</span>
-          <span class="up">▲ +12.4% ఈ నెల / month</span>
-        </div>
-        <div class="candle-chart" id="candleChart"></div>
-      </div>
-
-      <!-- FEATURES -->
-      <div class="features a4">
-        <div class="feat-row">
-          <div class="feat-icon">📊</div>
-          <div class="feat-text">
-            <p>నిపుణుల మార్గదర్శకత్వం<span class="en">Expert Guidance</span></p>
-            <span>ప్రొఫెషనల్ స్కిల్ ట్రైనింగ్ · Professional skill training</span>
-          </div>
-          <span class="feat-arrow">▶</span>
-        </div>
-        <div class="feat-row">
-          <div class="feat-icon">⚡</div>
-          <div class="feat-text">
-            <p>ప్రాక్టికల్ లెర్నింగ్<span class="en">Practical Learning</span></p>
-            <span>లైవ్ సెషన్స్ & అప్‌డేట్స్ · Live sessions & updates</span>
-          </div>
-          <span class="feat-arrow">▶</span>
-        </div>
-        <div class="feat-row">
-          <div class="feat-icon">🎯</div>
-          <div class="feat-text">
-            <p>కమ్యూనిటీ సర్కిల్<span class="en">Community Circle</span></p>
-            <span>నేర్చుకునేవారితో కనెక్ట్ అవ్వండి · Connect with learners</span>
-          </div>
-          <span class="feat-arrow">▶</span>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <div class="cta-block a5">
-        <a href="https://t.me/+bljv_B9x6fplOTI9" rel="noopener" id="ctaBtn" class="cta-btn join-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          <span class="cta-text">టెలిగ్రామ్ చానల్‌లో చేరండి<span class="en">Join Telegram Channel · Free</span></span>
-        </a>
-        <div class="steps">
-          1️⃣ బటన్ నొక్కండి → Telegram ఓపెన్ అవుతుంది<br>
-          2️⃣ <b>"Join / Request to Join"</b> నొక్కండి<br>
-          <span class="en">Tap the button → Telegram opens → tap "Join / Request to Join". You will see "Request Sent" and be approved shortly.</span>
-        </div>
-        <a href="https://t.me/+bljv_B9x6fplOTI9" class="fallback-link" id="fallbackLink">Telegram ఓపెన్ కాలేదా? ఇక్కడ నొక్కండి<br>Did not open? Tap here</a>
-        <div id="openInBrowserNotice">Telegram open కాలేదా? పైన కుడివైపు (⋮) మెనూ నుండి "Open in Browser / Chrome" ఎంచుకుని మళ్ళీ ప్రయత్నించండి.<br>If Telegram did not open, use the (⋮) menu at top right and choose "Open in Browser / Chrome", then try again.</div>
-      </div>
-
-      <!-- FOOTER -->
-      <div class="footer-bar">
-        <p>విద్యా ప్రయోజనాల కోసం మాత్రమే · For educational purposes only</p>
-        <div>
-          <p class="adby">Advertised by: SRS Marketing Agency</p>
-          <a class="adby-btn" href="https://t.me/srsagency" target="_blank" rel="noopener">📩 Visit @ SRS Marketing</a>
-        </div>
-      </div>
-
-    </div>
+<div class="strip"><div class="t" id="s1"></div></div>
+<header>
+ <div class="candles" id="cd"></div>
+ <div class="wrap">
+  <div class="brand">
+   <div class="lw"><img src="data:image/jpeg;base64,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" alt="Munaaf Trader" width="104" height="104"><div class="orb"><i></i></div><div class="orb b"><i></i></div><span class="live">● LIVE</span></div>
+   <div><b>Munaaf Trader</b><small>LEARNING MACHINE</small></div>
   </div>
-</div>
-
-<!-- BOTTOM STATUS BAR -->
-<div class="status-bar">
-  <span>SYS: ONLINE <span class="online">●</span></span>
-  <span id="clock"></span>
-  <span>SKILLS: <span class="online" id="skillTicker">LEARNING ▲</span></span>
-</div>
-
+  <span class="eyebrow te">🔥 ఉచిత మార్కెట్ లెర్నింగ్ • Free Market Learning</span>
+  <h1 class="te">స్టాక్ మార్కెట్ నేర్చుకోండి<br><span>Learn Trading Step by Step</span></h1>
+  <p class="sub te">తెలుగులో సులభంగా, ప్రాక్టికల్‌గా నేర్చుకోండి. Simple Telugu + English lessons, live market guidance.</p>
+  <a class="btn" href="#" data-tg>
+   <span class="ic"><svg viewBox="0 0 24 24"><path d="M9.8 15.6l-.4 4.2c.6 0 .9-.3 1.2-.6l2.9-2.7 6 4.4c1.1.6 1.9.3 2.2-1L23.9 3.9c.4-1.6-.6-2.2-1.6-1.8L1.6 10c-1.6.6-1.6 1.5-.3 1.9l5.3 1.7 12.3-7.7c.6-.4 1.1-.2.7.2z"/></svg></span>
+   <span class="te"><span class="t">Telegram లో జాయిన్ అవ్వండి</span><small>Join Telegram Channel – Free</small></span>
+  </a>
+  <p class="hint te">👆 Telegram లో “Request to Join” తప్పక నొక్కండి</p>
+ </div>
+</header>
+<div class="strip r"><div class="t" id="s2"></div></div>
+<main class="wrap">
+ <h2 class="te">మీరు ఏం నేర్చుకుంటారు?<br><small>What you will learn</small></h2>
+ <ul class="list te">
+  <li>బేసిక్స్ నుండి అడ్వాన్స్‌డ్ వరకు<span>Share market basics to advanced concepts</span></li>
+  <li>చార్ట్ రీడింగ్ & టెక్నికల్ అనాలిసిస్<span>Chart reading and technical analysis</span></li>
+  <li>రిస్క్ మేనేజ్‌మెంట్ & ట్రేడింగ్ సైకాలజీ<span>Risk management and trading psychology</span></li>
+  <li>రోజువారీ మార్కెట్ అప్‌డేట్స్<span>Daily market updates and learning posts</span></li>
+ </ul>
+</main>
+<section class="cta2">
+ <div class="wrap">
+  <p class="te">ఈరోజే నేర్చుకోవడం మొదలుపెట్టండి<br><small style="font-weight:500">Start learning today</small></p>
+  <a class="btn b2" href="#" data-tg>
+   <span class="ic"><svg viewBox="0 0 24 24"><path d="M9.8 15.6l-.4 4.2c.6 0 .9-.3 1.2-.6l2.9-2.7 6 4.4c1.1.6 1.9.3 2.2-1L23.9 3.9c.4-1.6-.6-2.2-1.6-1.8L1.6 10c-1.6.6-1.6 1.5-.3 1.9l5.3 1.7 12.3-7.7c.6-.4 1.1-.2.7.2z"/></svg></span>
+   <span class="te"><span class="t">ఇప్పుడే జాయిన్ అవ్వండి</span><small>Join Now on Telegram</small></span>
+  </a>
+ </div>
+</section>
+<div class="disc"><div class="wrap te">
+ <b>Disclaimer:</b> This page and channel are for educational purposes only. We are not SEBI registered advisors. Trading and investing in the stock market involve risk, and past performance does not guarantee future results. Market rates shown above are indicative only. Please consult a certified financial advisor before investing. No profit or income is guaranteed.<br>
+ <b>నిరాకరణ:</b> ఇది కేవలం విద్యా ప్రయోజనాల కోసం మాత్రమే. మేము SEBI రిజిస్టర్డ్ సలహాదారులం కాదు. స్టాక్ మార్కెట్ ట్రేడింగ్‌లో రిస్క్ ఉంటుంది. ఎలాంటి లాభాలకు హామీ లేదు. పెట్టుబడి పెట్టే ముందు సర్టిఫైడ్ ఫైనాన్షియల్ అడ్వైజర్‌ను సంప్రదించండి.
+</div></div>
+<footer>Powered by <a href="https://t.me/srsagency" target="_blank" rel="noopener">SRS Marketing Agency</a></footer>
 <script>
-// === TICKER DATA ===
-const tickers = [
-  { sym: 'కమ్యూనికేషన్', val: 'స్కిల్', chg: '+1.2%', up: true },
-  { sym: 'లీడర్‌షిప్', val: 'స్కిల్', chg: '+0.9%', up: true },
-  { sym: 'డిజిటల్ మార్కెటింగ్', val: 'స్కిల్', chg: '+1.8%', up: true },
-  { sym: 'టైమ్ మేనేజ్‌మెంట్', val: 'స్కిల్', chg: '+0.6%', up: true },
-  { sym: 'పర్సనల్ ఫైనాన్స్', val: 'స్కిల్', chg: '+2.1%', up: true },
-  { sym: 'పబ్లిక్ స్పీకింగ్', val: 'స్కిల్', chg: '+0.4%', up: true },
-  { sym: 'ప్రాబ్లమ్ సాల్వింగ్', val: 'స్కిల్', chg: '+1.1%', up: true },
-  { sym: 'నెగోషియేషన్', val: 'స్కిల్', chg: '+0.7%', up: true },
-];
-
-const tickerEl = document.getElementById('ticker');
-const html = tickers.map(t => `
-  <div class="ticker-item">
-    <span class="ticker-sym">${t.sym}</span>
-    <span class="ticker-val ${t.up?'':'down'}">${t.val}</span>
-    <span class="ticker-chg">${t.chg}</span>
-  </div>
-`).join('');
-tickerEl.innerHTML = html + html;
-
-// === CANDLE CHART ===
-const candles = [
-  { bull: false, wickH: 8, bodyH: 14, wickL: 5 },
-  { bull: true,  wickH: 6, bodyH: 20, wickL: 4 },
-  { bull: true,  wickH: 10, bodyH: 16, wickL: 6 },
-  { bull: false, wickH: 5, bodyH: 12, wickL: 8 },
-  { bull: true,  wickH: 8, bodyH: 22, wickL: 5 },
-  { bull: true,  wickH: 12, bodyH: 18, wickL: 3 },
-  { bull: false, wickH: 7, bodyH: 10, wickL: 9 },
-  { bull: true,  wickH: 9, bodyH: 26, wickL: 4 },
-  { bull: true,  wickH: 6, bodyH: 20, wickL: 5 },
-  { bull: true,  wickH: 11, bodyH: 28, wickL: 6 },
-  { bull: false, wickH: 8, bodyH: 12, wickL: 7 },
-  { bull: true,  wickH: 5, bodyH: 32, wickL: 3 },
-  { bull: true,  wickH: 10, bodyH: 24, wickL: 4 },
-  { bull: true,  wickH: 7, bodyH: 30, wickL: 5 },
-  { bull: false, wickH: 9, bodyH: 14, wickL: 6 },
-  { bull: true,  wickH: 6, bodyH: 36, wickL: 4 },
-];
-
-const chartEl = document.getElementById('candleChart');
-chartEl.innerHTML = candles.map(c => `
-  <div class="candle ${c.bull ? 'bull' : 'bear'}">
-    <div class="wick" style="height:${c.wickH}px"></div>
-    <div class="body" style="height:${c.bodyH}px"></div>
-    <div class="wick" style="height:${c.wickL}px"></div>
-  </div>
-`).join('');
-
-// === CLOCK ===
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+var TG="https://t.me/+bljv_B9x6fplOTI9",TGAPP="tg://join?invite=bljv_B9x6fplOTI9",busy=false;
+var btns=document.querySelectorAll('[data-tg]');
+btns.forEach(function(b){b.setAttribute('href',TG)});
+function setBusy(on){btns.forEach(function(b){var t=b.querySelector('.t');
+  if(on){b.classList.add('busy');if(t){t.setAttribute('data-o',t.textContent);t.textContent='Telegram తెరుచుకుంటోంది…'}}
+  else{b.classList.remove('busy');if(t&&t.getAttribute('data-o'))t.textContent=t.getAttribute('data-o')}})}
+function openTG(){
+  var left=false;
+  document.addEventListener('visibilitychange',function(){if(document.hidden)left=true});
+  window.addEventListener('pagehide',function(){left=true});
+  if(/Android/i.test(navigator.userAgent)){
+    location.href=TGAPP;                                   // straight into Telegram app
+    setTimeout(function(){if(!left&&!document.hidden)location.href=TG},1400); // fallback
+  }else location.href=TG;
 }
-setInterval(updateClock, 300);
-updateClock();
+function lead(e){
+  e.preventDefault();
+  if(busy)return; busy=true; setBusy(true);                // one click = one Lead = one redirect
+  var id='lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  try{fbq('track','Lead',{content_name:'Telegram Join',content_category:'Munaaf Trader'},{eventID:id});}catch(x){}
+  setTimeout(openTG,600);                                  // give pixel time to send
+  setTimeout(function(){busy=false;setBusy(false)},5000);  // allow retry if Telegram didn't open
+}
+btns.forEach(function(b){b.addEventListener('click',lead)});
+window.addEventListener('pageshow',function(e){if(e.persisted){busy=false;setBusy(false)}});
+// floating candles
+(function(){var h='';for(var i=0;i<18;i++){h+='<i class="'+(Math.random()>.45?'g':'r')+'" style="left:'+(i*5.7+1)+'%;height:'+(35+Math.random()*80|0)+'px;animation-delay:-'+(Math.random()*4).toFixed(2)+'s"></i>'}document.getElementById('cd').innerHTML=h})();
+// Indicative running rates (simulated drift around base values)
+var R=[["NIFTY 50",24850],["BANK NIFTY",53420],["SENSEX",81300],["GOLD ₹/10g",98500],["SILVER ₹/kg",112000],["CRUDE $",68.4],["USD/INR",86.2],["BTC $",118000]];
+(function(){var h=R.map(function(r){var c=(Math.random()-.48)*0.9,v=r[1]*(1+c/100),cls=c>=0?'up':'dn';
+  return '<span>'+r[0]+' '+v.toLocaleString('en-IN',{maximumFractionDigits:2})+' <b class="'+cls+'">'+(c>=0?'▲':'▼')+Math.abs(c).toFixed(2)+'%</b></span>'}).join('');
+  s1.innerHTML=h;s2.innerHTML=h})();
 </script>
-
-<!-- ===================== TRACKING SCRIPT (from gtm.html) ===================== -->
-
-<script>
-(() => {
-  'use strict';
-
-  const CONFIG = Object.freeze({
-    pixelId: '2135032810416149',
-    telegramUrl: 'https://t.me/+bljv_B9x6fplOTI9',
-    telegramInvite: 'xz-23AchjnMyZjBl',
-    pageViewDelayMs: 3000,
-    passiveReaderDelayMs: 8000,
-    minimumClickTimeMs: 2500,
-    pageViewSessionKey: 'munaaf_qualified_page_view'
-  });
-
-  const pageOpenedAt = Date.now();
-
-  let pageViewTracked = false;
-  let leadTracked = false;
-  let humanInteractionDetected = false;
-
-  function loadMetaPixel() {
-    const pixelGuardKey = `__munaafPixelInitialized_${CONFIG.pixelId}`;
-
-    !function (f, b, e, v, n, t, s) {
-      if (f.fbq) return;
-      n = f.fbq = function () {
-        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-      };
-      if (!f._fbq) f._fbq = n;
-      n.push = n;
-      n.loaded = true;
-      n.version = '2.0';
-      n.queue = [];
-      t = b.createElement(e);
-      t.async = true;
-      t.src = v;
-      s = b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t, s);
-    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-
-    if (window[pixelGuardKey]) return;
-
-    let pixelAlreadyRegistered = false;
-    try {
-      if (typeof fbq.getState === 'function') {
-        const pixelState = fbq.getState();
-        pixelAlreadyRegistered = pixelState.pixels.some((pixel) =>
-          String(pixel.id) === String(CONFIG.pixelId)
-        );
-      }
-    } catch (error) {
-      pixelAlreadyRegistered = false;
-    }
-
-    if (!pixelAlreadyRegistered) {
-      fbq('init', CONFIG.pixelId);
-    }
-
-    window[pixelGuardKey] = true;
-  }
-
-  function sessionPageViewExists() {
-    try {
-      return sessionStorage.getItem(CONFIG.pageViewSessionKey) === 'true';
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function saveSessionPageView() {
-    try {
-      sessionStorage.setItem(CONFIG.pageViewSessionKey, 'true');
-    } catch (error) {
-      // ignore
-    }
-  }
-
-  function automationDetected() {
-    return navigator.webdriver === true;
-  }
-
-  function tryQualifiedPageView() {
-    const timeOnPageMs = Date.now() - pageOpenedAt;
-    const interactionQualified =
-      humanInteractionDetected && timeOnPageMs >= CONFIG.pageViewDelayMs;
-    const passiveReaderQualified = timeOnPageMs >= CONFIG.passiveReaderDelayMs;
-
-    const canTrack =
-      !pageViewTracked &&
-      !sessionPageViewExists() &&
-      !automationDetected() &&
-      (interactionQualified || passiveReaderQualified) &&
-      document.visibilityState === 'visible' &&
-      document.hasFocus() &&
-      typeof window.fbq === 'function';
-
-    if (!canTrack) return;
-
-    fbq('track', 'PageView', {
-      qualified_view: true,
-      human_interaction: humanInteractionDetected,
-      qualification: interactionQualified ? 'interaction_3_seconds' : 'focused_8_seconds',
-      time_on_page: Math.round(timeOnPageMs / 1000)
-    });
-
-    pageViewTracked = true;
-    saveSessionPageView();
-  }
-
-  function recordHumanInteraction(event) {
-    if (!event.isTrusted || humanInteractionDetected) return;
-    humanInteractionDetected = true;
-    tryQualifiedPageView();
-  }
-
-  function initializeVisitorQualification() {
-    ['pointerdown', 'touchstart', 'keydown', 'scroll', 'mousemove'].forEach((eventName) => {
-      window.addEventListener(eventName, recordHumanInteraction, { passive: true, once: true });
-    });
-
-    window.setTimeout(tryQualifiedPageView, CONFIG.pageViewDelayMs);
-    window.setTimeout(tryQualifiedPageView, CONFIG.passiveReaderDelayMs);
-  }
-
-  // === FB/INSTAGRAM IN-APP BROWSER DETECTION ===
-  // t.me links often fail to hand off to the native Telegram app when opened
-  // inside Facebook/Instagram's built-in webview. On Android, force-opening
-  // Chrome via an intent:// URL restores the hand-off. On iOS there is no
-  // reliable JS escape, so we just show a "open in browser" notice.
-  function isFacebookInAppBrowser() {
-    return /FBAN|FBAV|FB_IAB|Instagram/i.test(navigator.userAgent);
-  }
-  function isAndroidUA() {
-    return /Android/i.test(navigator.userAgent);
-  }
-  function isIOSUA() {
-    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
-  // Android: jump straight into the Telegram app (any Telegram variant) and
-  // fall back to the normal t.me page if no app handles tg://
-  function androidTelegramIntent() {
-    return `intent://join?invite=${CONFIG.telegramInvite}#Intent;scheme=tg;` +
-      `S.browser_fallback_url=${encodeURIComponent(CONFIG.telegramUrl)};end`;
-  }
-
-  function handleTelegramClick(event) {
-    const timeOnPageMs = Date.now() - pageOpenedAt;
-    const isQualifiedClick =
-      event.isTrusted &&
-      !automationDetected() &&
-      document.visibilityState === 'visible' &&
-      timeOnPageMs >= CONFIG.minimumClickTimeMs;
-
-    if (isQualifiedClick && !leadTracked && typeof window.fbq === 'function') {
-      fbq('track', 'Lead', {
-        value: 0,
-        currency: 'INR',
-        destination: 'Telegram',
-        time_on_page: Math.round(timeOnPageMs / 1000)
-      });
-      leadTracked = true;
-    }
-
-    // Navigation stays synchronous inside the tap (keeps user activation).
-    if (isFacebookInAppBrowser()) {
-      event.preventDefault();
-      if (isAndroidUA()) {
-        window.location.href = androidTelegramIntent();
-      } else {
-        window.location.href = `tg://join?invite=${CONFIG.telegramInvite}`;
-      }
-    }
-
-    // If we are still on screen a moment later, Telegram did not open: help the visitor.
-    window.setTimeout(() => {
-      if (document.visibilityState !== 'visible') return;
-      const fb = document.getElementById('fallbackLink');
-      if (fb) fb.classList.add('show');
-      if (isIOSUA() && isFacebookInAppBrowser()) {
-        const notice = document.getElementById('openInBrowserNotice');
-        if (notice) notice.classList.add('show');
-      }
-    }, 2200);
-  }
-
-  function initializeTelegramButtons() {
-    const buttons = document.querySelectorAll('.join-link, .jnBtn');
-    buttons.forEach((button) => {
-      button.href = CONFIG.telegramUrl;
-      button.addEventListener('click', handleTelegramClick);
-    });
-
-    const fallbackLink = document.getElementById('fallbackLink');
-    if (fallbackLink) fallbackLink.href = CONFIG.telegramUrl;
-  }
-
-  loadMetaPixel();
-  initializeVisitorQualification();
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeTelegramButtons, { once: true });
-  } else {
-    initializeTelegramButtons();
-  }
-})();
-</script>
-
 </body>
 </html>
